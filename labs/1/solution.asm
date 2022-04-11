@@ -3,12 +3,24 @@ ExitMsg db "Press Enter to Exit",10  ; создаем переменную, хр
 A dw -30 ; создадим переменную a и дадим ей значение -30
 B dw 20 ; создадим переменную b и дадим ей значение 21
 lenExit equ $-ExitMsg    ; создаем переменную, хранящую длину сообщения выше
-   
+
+val1 db 255
+chart dw 256
+lue3 dw -128
+v5 db 10h
+      db 100101B
+beta db 23, 23h, 0ch
+sdk db "Hello",10
+min dw -32767
+ar dd 12345678h
+valar times 5 db 8
+
   section .bss
 X resd 1 ; создадим переменную x и зарезервируем для нее 1 байт              
 InBuf   resb    10              ; буфер для вводимой строки    
 lenIn   equ     $-InBuf 
-        
+alu resw 10
+fl resb 5
   section .text            ; сегмент кода       
 global  _start
   _start:
