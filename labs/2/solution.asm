@@ -1,37 +1,58 @@
-section .data
-    InputBMsg db "Enter B number: "
-    lenInputB equ $-InputBMsg
+section .data ;Секция инициализированных данных
+ 
+    InputRMsg db "Enter R number: "
+    lenInputR equ $-InputRMsg
     InputAMsg db "Enter A number: "
     lenInputA equ $-InputAMsg
-    InputKMsg db "Enter K number: "
-    lenInputK equ $-InputKMsg
+    InputQMsg db "Enter Q number: "
+    lenInputQ equ $-InputQMsg
     razd db 0xa
     
     ResMsg db "Calculation result: "
     lenRes equ $-ResMsg
-
-section .bss
+    
+section .bss ;Секция неинициализированных данных
     A resw 1
-    B resw 1
-    K resw 1
+    R resw 1
+    Q resw 1
     F resw 1
     InBuf resb 6
     lenIn equ $-InBuf
     OutBuf resb 4
     lenOut equ $-OutBuf
-
-section .text
-    global _start
-
+    
+section .text ;Секция кода 
+ 
+    global  _start
 _start:
-    ; Выводим сообщение о вводе числа
+    ; Вывод сообщения об вводе числа R
+    mov     rax, 1    
+    mov     rdi, 1          
+    mov     rsi, InputRMsg    
+    mov     rdx, lenInputR   
+    syscall             
+        
+    ; Считываем введенную переменную R
+         
+    mov     rax, 0         
+    mov     rdi, 0         
+    mov     esi, InBuf      
+    mov     rdx, lenIn      
+    syscall
+    call StrToInt64
+    cmp EBX, 0
+    jne StrToInt64.Error
+    mov [R], ax ; Записали R
+        
+    ; Вывод сообщения об вводе числа A
     mov     rax, 1    
     mov     rdi, 1          
     mov     rsi, InputAMsg    
     mov     rdx, lenInputA   
-    syscall   
-
-    ; Вводим число
+    syscall 
+        
+    ; Считываем введенную переменную A
+        
     mov     rax, 0         
     mov     rdi, 0         
     mov     esi, InBuf      
@@ -40,16 +61,17 @@ _start:
     call StrToInt64
     cmp EBX, 0
     jne StrToInt64.Error
-    mov [A], ax ; Записали А
-    
-    ; Выводим сообщение о вводе числа
+    mov [A], ax ; Записали A
+        
+    ; Вывод сообщения об вводе числа Q
     mov     rax, 1    
     mov     rdi, 1          
-    mov     rsi, InputBMsg    
-    mov     rdx, lenInputB   
+    mov     rsi, InputQMsg    
+    mov     rdx, lenInputQ   
     syscall
-
-    ; Вводим число
+        
+    ; Считываем введенную переменную Q
+        
     mov     rax, 0         
     mov     rdi, 0         
     mov     esi, InBuf      
@@ -58,48 +80,42 @@ _start:
     call StrToInt64
     cmp EBX, 0
     jne StrToInt64.Error
-    mov [B], ax ; Записали B
-
-    ; Выводим сообщение о вводе числа
-    mov     rax, 1    
-    mov     rdi, 1          
-    mov     rsi, InputKMsg    
-    mov     rdx, lenInputK   
+    mov [Q], ax ; Записали Q
+        
+    ; Ставим Enter после ввода всех переменных (для красоты)
+        
+    mov     rax, 1         
+    mov     rdi, 1         
+    mov     rsi, razd      
+    mov     rdx, 1      
     syscall
-
-    ; Вводим число
-    mov     rax, 0         
-    mov     rdi, 0         
-    mov     esi, InBuf      
-    mov     rdx, lenIn      
-    syscall
-    call StrToInt64
-    cmp EBX, 0
-    jne StrToInt64.Error
-    mov [K], ax ; Записали K
-
-    ;считаем
+        
+    ; Блок вычислений
+ 
+    mov ax, [R] ;AX = r
+    mov dx, [A] ;DX = a
+    mov cx, [Q] ;CX = q
+      
+    imul ax, ax ;AX = r^2
+    mov [F], ax ;F = r^2
+    imul cx, dx ;q = q * a
+    imul cx, -2 ;q = q * -2
+    add [F], cx
     mov ax, [A]
-    mov cx, [B]
-    mov dx, [K]
-
-    imul dx, dx ;k^2
-    imul ax, cx ; a*b
-    mov [F], ax
-    imul cx, cx ; b^2
-    imul cx, cx; b^2*b=b^3
-    mov ax, cx; переносим b^3 для деления
-    add dx, 2; k^2 + 2
-    div dx; b^3/(k^2+2)
-    sub [F], dx; последнее действие
-
-    ;ввыодим результат
+    mov dx, [A]
+    mov cx, [Q]
+    imul ax, ax
+    imul ax, dx
+    cwd
+    idiv cx
+    add [F], ax
+    ; Блок вывода сообщения о результате
     mov     rax, 1    
     mov     rdi, 1          
     mov     rsi, ResMsg    
     mov     rdx, lenRes   
     syscall
-
+    ; Блок вывода самого результата
     mov esi, OutBuf
     mov ax, [F]
     cwde
@@ -109,20 +125,15 @@ _start:
     mov rsi, OutBuf
     mov rdx, lenOut
     syscall
-
-    ; Ставим Enter после вывода результата (для красоты)
+    ; Ставим Enter после вывода результата (для красоты
     mov     rax, 1         
     mov     rdi, 1         
     mov     rsi, razd      
     mov     rdx, 1      
     syscall
-
     ; Завершение работы программы
     mov     rax, 60        
     xor     rdi, rdi          
     syscall
         
 %include "../lib64.asm" ;Библиотека Ивановой Г.С. 
-
-    
-
