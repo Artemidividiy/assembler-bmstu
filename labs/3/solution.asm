@@ -142,7 +142,7 @@ correct:
     cwde
     call IntToStr64
     mov rdx, rax
-    mov rax, 1
+    mov rax, 4
     mov rdi, 1
     mov rsi, OutBuf
     syscall
