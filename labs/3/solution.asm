@@ -4,8 +4,8 @@ section .data ;Секция инициализированных данных
     lenInputA equ $-InputAMsg
     InputBMsg db "Enter B number: "
     lenInputB equ $-InputBMsg
-    InputQMsg db "Enter Q number: "
-    lenInputQ equ $-InputQMsg
+    InputCMsg db "Enter C number: "
+    lenInputC equ $-InputCMsg
     razd db 0xa
     
     ResMsg db "Calculation result: "
@@ -14,7 +14,7 @@ section .data ;Секция инициализированных данных
 section .bss ;Секция неинициализированных данных
     A resw 1
     B resw 1
-    Q resw 1
+    C resw 1
     F resw 1
     InBuf resb 6
     lenIn equ $-InBuf
@@ -66,11 +66,11 @@ _start:
     ; Вывод сообщения об вводе числа Q
     mov     rax, 1    
     mov     rdi, 1          
-    mov     rdx, lenInputQ   
-    mov     rsi, InputQMsg    
+    mov     rdx, lenInputC   
+    mov     rsi, InputCMsg    
     syscall
         
-    ; Считываем введенную переменную Q
+    ; Считываем введенную переменную C
         
     mov     rax, 0         
     mov     rdi, 0         
@@ -81,7 +81,7 @@ _start:
     call StrToInt64
     cmp EBX, 0
     jne StrToInt64.Error
-    mov [Q], ax 	;Записали Q
+    mov [C], ax 	;Записали Q
         
     ; Ставим Enter после ввода всех переменных
         
@@ -114,7 +114,7 @@ more:
 	imul ax, ax 	;ax = ax*ax
 	imul ax, cx 	;ax = ax*cx
 	
-	imul cx, [Q] 	;cx = cx*q
+	imul cx, [C] 	;cx = cx*q
 	imul cx, 2 	;cx = cx*2
 	
 	sub ax, cx 	;ax = ax - cx
