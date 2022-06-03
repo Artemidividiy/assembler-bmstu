@@ -74,9 +74,10 @@ _start:
         
     mov     rax, 0         
     mov     rdi, 0         
-    mov     esi, InBuf      
+    mov     rsi, InBuf      
     mov     rdx, lenIn      
     syscall
+    mov rsi, InBuf
     call StrToInt64
     cmp EBX, 0
     jne StrToInt64.Error
@@ -136,14 +137,14 @@ correct:
  
     ; Блок вывода самого результата
         
-    mov esi, OutBuf
+    mov edi, OutBuf
     mov ax, [F]
     cwde
     call IntToStr64
+    mov rdx, rax
     mov rax, 1
     mov rdi, 1
     mov rsi, OutBuf
-    mov rdx, lenOut
     syscall
         
     ; Ставим Enter после вывода результата (для красоты)
