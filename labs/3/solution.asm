@@ -137,14 +137,14 @@ correct:
  
     ; Блок вывода самого результата
         
-    mov edi, OutBuf
+    mov esi, OutBuf
     mov ax, [F]
     cwde
     call IntToStr64
-    mov rdx, rax
-    mov rax, 4
-    mov rdi, 1
-    mov rsi, OutBuf
+    mov rax, 1
+        mov rdi, 1
+        mov rsi, OutBuf
+        mov rdx, lenOut
     syscall
         
     ; Ставим Enter после вывода результата (для красоты)
