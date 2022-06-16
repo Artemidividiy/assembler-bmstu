@@ -92,6 +92,13 @@ _start:
     syscall
         
     ; Блок вычислений
+    mov ax, [A] 		
+    mov cx, [B] 	    
+    cmp cx, ax
+    jl more
+    mov cx, [C]
+    cmp cx, ax
+    jl more
     mov ax, [A] 	;ax = a
     sub ax, [B] 	;ax = a - b
     mov cx, ax 	;cx = ax
@@ -99,13 +106,11 @@ _start:
     imul ax, cx 	;ax = ax*cx
         
     mov cx, 0	;cx = 0
-    cmp cx, ax
-    jl more
-        
-    mov bx, -2	;bx = -2
+
+    mov bx, -2	
     cwd
-    idiv bx	;ax = ax/bx
-    mov [F], ax	;f = ax
+    idiv bx	
+    mov [F], ax	
     jmp correct
 
 more:
