@@ -3,6 +3,8 @@ section .data
   array_len equ 10
 
 section .bss
+  OutBuf resb 4
+  lenOut equ $-OutBuf
 
 section .text
 
@@ -47,7 +49,14 @@ output:
   dec rcx
   loop_output:
     mov esi, [rbx]
-	
+    cwde 
+    call IntToStr64
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, OutBuf
+    mov rdx, lenOut
+    syscall
+  loop loop_output 	
 
 exit:
   mov rax, 0x3c
