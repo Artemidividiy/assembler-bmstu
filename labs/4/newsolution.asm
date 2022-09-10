@@ -1,58 +1,66 @@
-; b_sort.asm
-; bubble sort
-; nasm -f elf64 -o b_sort.o b_sort.asm
-; gcc -o b_sort b_sort.o
-; ./b_sort
-extern printf
- 
 section .data
-	array: dq 5,4,3,2,1 
-	fmt: db '%ld',0xa,0
- 
+  array dd 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+  array_len equ 10
+
+section .bss
+  OutBuf resb 4
+  lenOut equ $-OutBuf
+
 section .text
-global main
-main:
-	push rbp
-	mov rsi, 0
-	mov rdi, 0
-L1:
-	cmp rsi, 5
-	jge L1_END
-	mov rdi, rsi
-	inc rdi
-	L2:
-		cmp rdi, 5
-		jge L2_END
-		mov rax, [array+rsi*8]
-		mov rbx, [array+rdi*8]
-		cmp rax, rbx
-		jg exchange
-		inc rdi
-		jmp L2
-	exchange:
-		mov [array+rdi*8], rax
-		mov [array+rsi*8], rbx
-		inc rdi
-		jmp L2
-	L2_END:
-		inc rsi
-		jmp L1
-L1_END:
-	mov rbx, 0
-L3:
-	cmp rbx, 5
-	jge L3_END
-	mov rdi, fmt
-	mov rsi, [array+rbx*8]
-	mov rax, 0
-	call printf
-	inc rbx
-	jmp L3
-L3_END:
-	pop rbp
-	mov rax, 60
-	syscall
-	
-	ret 
 
+global _start
 
+_start:
+  mov rcx, array_len
+  dec rcx
+  mov rsi, array
+  mov r8, 1
+
+  outer_loop:
+    push rcx
+    mov rcx, array_len
+    
+    sub rcx, r8
+
+    inc r8
+
+    mov rbx, array
+
+    inner_loop:
+      mov eax, [rbx]
+      cmp eax, [rbx + 4]
+      jle skip_swap
+
+      ; swap
+      mov r9d, [rbx]
+      mov r10d, [rbx + 4]
+      mov [rbx], r10d
+      mov [rbx + 4], r9d
+
+      add rbx, 4
+    skip_swap:
+    loop inner_loop
+
+    pop rcx
+  loop outer_loop
+
+output: 
+  mov rcx, array_len
+  dec rcx
+  loop_output:
+    mov esi, [rbx]
+    cwde 
+    call IntToStr64
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, OutBuf
+    mov rdx, lenOut
+    syscall
+  loop loop_output 	
+
+exit:
+  mov rax, 0x3c
+  mov rdi, 0
+  syscall
+
+%include "../lib64.asm"
