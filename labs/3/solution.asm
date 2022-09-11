@@ -63,7 +63,7 @@ _start:
     jne StrToInt64.Error
     mov [B], ax 	;Записали B
         
-    ; Вывод сообщения об вводе числа Q
+    ; Вывод сообщения об вводе числа C
     mov     rax, 1    
     mov     rdi, 1          
     mov     rdx, lenInputC   
@@ -81,7 +81,7 @@ _start:
     call StrToInt64
     cmp EBX, 0
     jne StrToInt64.Error
-    mov [C], ax 	;Записали Q
+    mov [C], ax 	;Записали C
         
     ; Ставим Enter после ввода всех переменных
         
@@ -99,35 +99,25 @@ _start:
     mov cx, [C]
     cmp cx, ax
     jl more
-    mov ax, [A] 	;ax = a
-    sub ax, [B] 	;ax = a - b
-    mov cx, ax 	;cx = ax
-    imul ax, ax 	;ax = ax*ax
-    imul ax, cx 	;ax = ax*cx
-        
-    mov cx, 0	;cx = 0
-
-    mov bx, -2	
-    cwd
-    idiv bx	
+    imul cx,cx 
+    imul ax, cx
+    mov cx, [B] 	
+    imul cx, 2 
+    sub ax, cx 
     mov [F], ax	
     jmp correct
 
 more:
-	mov ax, [A] 	;ax = a
-	mov cx, ax 	;cx = ax
-	imul ax, ax 	;ax = ax*ax
-	imul ax, cx 	;ax = ax*cx
-	
-	imul cx, [C] 	;cx = cx*q
-	imul cx, 2 	;cx = cx*2
-	
-	sub ax, cx 	;ax = ax - cx
-	mov cx, [B] 	;cx = b
-	imul cx, cx 	;cx = b*b
-	
-	add ax, cx 	;ax = ax + cx
-	mov [F], ax 	;f = ax
+    mov cx, [C]
+	idiv cx
+    push ax
+    mov ax, [A]
+    mov cx, [B]
+    idiv cx
+    mov dx, ax
+    pop ax
+    add dx, ax
+	mov [F], dx 	
 
 	jmp correct
 

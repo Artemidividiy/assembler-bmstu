@@ -2,11 +2,11 @@
 
 section .data
   input_len equ (n_words * (word_len + 1) - 1)
-  prompt db 'Введите строку: '
+  prompt db 'Submit a string: '
   prompt_len equ $ - prompt
-  output_prompt db 'результат:', 0x0a
+  output_prompt db 'Results:', 0x0a
   output_prompt_len equ $ - output_prompt
-  vowels db 'aeiou'
+  vowels db 'aeiouy'
   vowels_len equ $ - vowels
   n_words equ 8
   word_len equ 5
@@ -113,7 +113,7 @@ check_vowel:
   ; scan vowels
   mov rcx, vowels_len
   mov rdi, vowels
-  repne scasb
+  repne scasb ; find byte = al in (e)cx bytes by es:(e)di adress
   je is_vowel
 
   ; set false (not a vowel)

@@ -44,19 +44,20 @@ _start:
     pop rcx
   loop outer_loop
 
-output: 
-  mov rcx, array_len
-  dec rcx
-  loop_output:
-    mov esi, [rbx]
-    cwde 
-    call IntToStr64
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, OutBuf
-    mov rdx, lenOut
-    syscall
-  loop loop_output 	
+;output: 
+;  mov rcx, array_len
+ ; dec rcx
+  ;loop_output:
+   ; mov esi,4
+    ;mov ax, [rbx]
+    ;cwde 
+    ;call IntToStr64
+    ;mov rax, 1
+    ;mov rdi, 1
+    ;mov rsi, [rbx]
+    ;mov rdx, 4
+    ;syscall
+  ;loop loop_output 	
 
 exit:
   mov rax, 0x3c
